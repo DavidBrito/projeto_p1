@@ -32,7 +32,7 @@ def make_tweet(text, time, lat, lon):
 
 
 def tweet_words(tweet):
-    """ Retorna uma lista das palavras do texto no tweet. """
+    """ Retorna uma lista das palavras do texto no tweet."""
     return extract_words(tweet["text"])
 
 
@@ -87,22 +87,28 @@ def make_sentiment(value):
     0.2
     """
     assert value is None or (value >= -1 and value <= 1), 'Illegal value'
-    "*** YOUR CODE HERE ***"
+
+    if has_sentiment(value):
+        return sentiment_value(value)
+    else:
+        return None
 
 
 def has_sentiment(s):
     """Retorna se o sentimento tem valor."""
-    if s >= -1 and s <= 1:
-        return True
-
     if s is None:
+
         return False
+
+    elif s >= -1 and s <= 1:
+
+        return True
 
 
 def sentiment_value(s):
     """Return the value of a sentiment s."""
     assert has_sentiment(s), 'No sentiment value'
-    "*** YOUR CODE HERE ***"
+
     return s
 
 
@@ -121,6 +127,7 @@ def get_word_sentiment(word):
     """
     return make_sentiment(word_sentiments.get(word, None))
 
+
 def analyze_tweet_sentiment(tweet):
     """ Return a sentiment representing the degree of positive or negative
     sentiment in the given tweet, averaging over all the words in the tweet
@@ -138,13 +145,35 @@ def analyze_tweet_sentiment(tweet):
     >>> no_sentiment = make_tweet("Go bears!", None, 0, 0)
     >>> has_sentiment(analyze_tweet_sentiment(no_sentiment))
     False
+
     """
-    average = make_sentiment(None)
-    "*** YOUR CODE HERE ***"
-    return average
+    palavras = tweet_words(tweet)
+    valor_total = 0.0
+    numero_palavras = 0
+    tem_sentimento = False
+
+    for palavra in palavras:
+        valor_sentimento = get_word_sentiment(palavra)
+
+        if valor_sentimento is None:
+            valor_total += 0
+        else:
+            numero_palavras += 1
+            valor_total += valor_sentimento
+            tem_sentimento = True
+
+    if tem_sentimento:
+        media = valor_total/numero_palavras
+
+        return media
+
+    else:
+
+        return make_sentiment(None)
 
 
 # Phase 2: The Geometry of Maps
+
 
 def find_centroid(polygon):
     """Find the centroid of a polygon.
@@ -157,7 +186,7 @@ def find_centroid(polygon):
 
     Hint: If a polygon has 0 area, return its first position as its centroid
 
-    >>> p1, p2, p3 = make_position(1, 2), make_position(3, 4), make_position(5, 0)
+    >>> p1, p2,p3 = make_position(1, 2),make_position(3, 4), make_position(5,0)
     >>> triangle = [p1, p2, p3, p1]  # First vertex is also the last vertex
     >>> find_centroid(triangle)
     (3.0, 2.0, 6.0)
@@ -166,12 +195,14 @@ def find_centroid(polygon):
     >>> find_centroid([p1, p2, p1])
     (1, 2, 0)
     """
+
     "*** YOUR CODE HERE ***"
+
 
 def find_center(polygons):
     """Compute the geographic center of a state, averaged over its polygons.
 
-    The center is the average position of centroids of the polygons in polygons,
+    The center is the average position of centroids of the polygons in polygons
     weighted by the area of those polygons.
 
     Arguments:
@@ -214,6 +245,7 @@ def find_closest_state(tweet, state_centers):
     """
     "*** YOUR CODE HERE ***"
 
+
 def group_tweets_by_state(tweets):
     """Return a dictionary that aggregates tweets by their nearest state center.
 
@@ -232,6 +264,7 @@ def group_tweets_by_state(tweets):
     "*** YOUR CODE HERE ***"
     return tweets_by_state
 
+
 def most_talkative_state(term):
     """Return the state that has the largest number of tweets containing term.
 
@@ -242,6 +275,7 @@ def most_talkative_state(term):
     """
     tweets = load_tweets(make_tweet, term)  # A list of tweets containing term
     "*** YOUR CODE HERE ***"
+
 
 def average_sentiments(tweets_by_state):
     """Calculate the average sentiment of the states by averaging over all
@@ -293,6 +327,7 @@ def print_sentiment(text='Are you virtuous or verminous?'):
         if has_sentiment(s):
             print(layout.format(word, sentiment_value(s)))
 
+
 def draw_centered_map(center_state='TX', n=10):
     """Draw the n states closest to center_state."""
     us_centers = {n: find_center(s) for n, s in us_states.items()}
@@ -303,6 +338,7 @@ def draw_centered_map(center_state='TX', n=10):
         draw_name(name, us_centers[name])
     draw_dot(center, 1, 10)  # Mark the center state with a red dot
     wait()
+
 
 def draw_state_sentiments(state_sentiments={}):
     """Draw all U.S. states in colors corresponding to their sentiment value.
@@ -318,6 +354,7 @@ def draw_state_sentiments(state_sentiments={}):
         center = find_center(shapes)
         if center is not None:
             draw_name(name, center)
+
 
 def draw_map_for_term(term='my job'):
     """Draw the sentiment map corresponding to the tweets that contain term.
@@ -335,6 +372,7 @@ def draw_map_for_term(term='my job'):
             draw_dot(tweet_location(tweet), sentiment_value(s))
     wait()
 
+
 def draw_map_by_hour(term='my job', pause=0.5):
     """Draw the sentiment map for tweets that match term, for each hour."""
     tweets = load_tweets(make_tweet, term)
@@ -347,6 +385,7 @@ def draw_map_by_hour(term='my job', pause=0.5):
         draw_state_sentiments(state_sentiments)
         message("{0:02}:00-{0:02}:59".format(hour))
         wait(pause)
+
 
 def run_doctests(names):
     """Run verbose doctests for all functions in space-separated names."""
@@ -362,6 +401,7 @@ def run_doctests(names):
         print("Test passed.")
     else:
         print("Error(s) found in: " + ', '.join(errors))
+
 
 @main
 def run(*args):
