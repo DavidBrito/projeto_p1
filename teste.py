@@ -1,5 +1,13 @@
-from datetime import datetime, date, time
+from string import ascii_letters
 
-data = datetime(2012, 10, 23, 5)
+st = "as@d ax1sd as.df"
+vc = ""
 
-print (data)
+for i in st:
+    if i in ascii_letters:
+        vc += i
+    else:
+        vc += " "
+
+print (vc)
+print (vc.split())

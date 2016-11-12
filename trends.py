@@ -9,7 +9,7 @@ from string import ascii_letters
 from ucb import main, trace, interact, log_current_line
 
 
-# Phase 1: The Feelings in Tweets
+# Phase 1: The Feelings in Tweets  (FEITO 1/2)
 
 def make_tweet(text, time, lat, lon):
     """Return a tweet, represented as a python dictionary.
@@ -32,21 +32,20 @@ def make_tweet(text, time, lat, lon):
 
 
 def tweet_words(tweet):
-    """ Retorna uma lista das palavras do texto do tweet. (FUNCIONANDO) """
-    lista_palavras = extract_words(tweet["text"])
-    return lista_palavras
+    """ Retorna uma lista das palavras do texto no tweet. """
+    return extract_words(tweet["text"])
 
 
 def tweet_time(tweet):
-    """Return the datetime that represents when the tweet was posted."""
-    "*** YOUR CODE HERE ***"
-    data = datetime.tweet["time"]
-    return data
+    """ Retorna a chave time do dicionario tweet. """
+    return tweet['time']
 
 
 def tweet_location(tweet):
-    """Return a position (see geo.py) that represents the tweet's location."""
-    "*** YOUR CODE HERE ***"
+    """Retorna um tupla representando a posicao (latitude,longitude)
+     da localizacao do tweet."""
+    return make_position(tweet['latitude'], tweet['longitude'])
+
 
 def tweet_string(tweet):
     """Return a string representing the tweet."""
@@ -54,10 +53,8 @@ def tweet_string(tweet):
 
 
 def extract_words(text):
-    """Return the words in a tweet, not including punctuation.
-    (FUNCIONANDO)
+    """Retorna as palavras de uma frase em um tweet, nao inclui pontuacao.
 
-    DOCTEST:
     >>> extract_words('anything else.....not my job')
     ['anything', 'else', 'not', 'my', 'job']
     >>> extract_words('i love my job. #winning')
@@ -92,14 +89,22 @@ def make_sentiment(value):
     assert value is None or (value >= -1 and value <= 1), 'Illegal value'
     "*** YOUR CODE HERE ***"
 
+
 def has_sentiment(s):
-    """Return whether sentiment s has a value."""
-    "*** YOUR CODE HERE ***"
+    """Retorna se o sentimento tem valor."""
+    if s >= -1 and s <= 1:
+        return True
+
+    if s is None:
+        return False
+
 
 def sentiment_value(s):
     """Return the value of a sentiment s."""
     assert has_sentiment(s), 'No sentiment value'
     "*** YOUR CODE HERE ***"
+    return s
+
 
 def get_word_sentiment(word):
     """Return a sentiment representing the degree of positive or negative
