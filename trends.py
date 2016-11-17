@@ -198,7 +198,20 @@ def find_centroid(polygon):
 
     "*** YOUR CODE HERE ***"
 
-
+def area_polygon(polygon):
+	i = 0
+	x = 0
+	y = 1
+	somatorio = 0
+	
+	while i < len(polygon) - 1:
+		somatorio += (polygon[i][x] * polygon[i+1][y]) - (polygon[i+1][x] * polygon[i][y])
+	i += 1
+	
+	area = abs(somatorio / 2)
+	
+	return area
+	
 def find_center(polygons):
     """Compute the geographic center of a state, averaged over its polygons.
 
