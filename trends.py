@@ -195,22 +195,60 @@ def find_centroid(polygon):
     >>> find_centroid([p1, p2, p1])
     (1, 2, 0)
     """
-
-    "*** YOUR CODE HERE ***"
+    area = area_polygon(polygon)
+    
+    if area == 0:
+        return (polygon[0][0], polygon[0][1],  )
+    
+    i = 0
+    x = 0
+    y = 1
+    
+    #centroidex
+    
+    somatoriox = 0
+    
+    while i < len(polygon) - 1:
+        somatoriox += (polygon[i][x]+ polygon[i+1][x])*(polygon[i][x]*polygon[i+1][y] - polygon[i+1][x]*polygon[i][y])   
+        i += 1
+        
+    cx = somatoriox/area*6
+    
+    #centroidey
+    
+    somatorioy = 0
+    j = 0
+    
+    while j < len(polygon) - 1:
+        somatorioy += (polygon[j][y] + polygon[j+1][y])*(polygon[j][x]*polygon[j+1][y] - polygon[j+1][x]*polygon[j][y])
+        j += 1
+        
+    cy = somatorioy/area*6
+    
+    return (cx, cy, area)
+    
+    
+       
 
 def area_polygon(polygon):
-	i = 0
-	x = 0
-	y = 1
-	somatorio = 0
+    """
+    >>> p1, p2, p3 = (1,2),(3,4),(5,0)
+    >>> triangulo = [p1, p2, p3, p1]
+    >>> area_polygon(triangulo)
+    6.0
+    """
+    i = 0
+    x = 0
+    y = 1
+    somatorio = 0
 	
-	while i < len(polygon) - 1:
-		somatorio += (polygon[i][x] * polygon[i+1][y]) - (polygon[i+1][x] * polygon[i][y])
-	i += 1
+    while i < len(polygon) - 1:
+        somatorio += (polygon[i][x] * polygon[i+1][y]) - (polygon[i+1][x] * polygon[i][y])
+        i += 1
 	
-	area = abs(somatorio / 2)
+    area = abs(somatorio / 2)
 	
-	return area
+    return area
 	
 def find_center(polygons):
     """Compute the geographic center of a state, averaged over its polygons.
@@ -256,7 +294,14 @@ def find_closest_state(tweet, state_centers):
     >>> find_closest_state(ny, us_centers)
     'NJ'
     """
-    "*** YOUR CODE HERE ***"
+    """
+    estado = make_tweet(tweet)
+    lat = estado[latitude]
+    long = estado[longitude]
+    forca bruto ou ???
+    geo_distance(tupla, us_centers) 
+    tupla = (lat, long)
+    """
 
 
 def group_tweets_by_state(tweets):
