@@ -277,8 +277,8 @@ def find_center(polygons):
 
 def teste():
     """
-    >>> ca = find_center(us_states['HI'])
-    >>> print(us_states['PA'])
+    >>> us_centers = {n: find_center(s) for n, s in us_states.items()}
+    >>> print(us_centers)
     result
     """
 
@@ -294,7 +294,6 @@ def find_closest_state(tweet, state_centers):
     Arguments:
     tweet -- a tweet abstract data type
     state_centers -- a dictionary from state names to positions.
-
     >>> us_centers = {n: find_center(s) for n, s in us_states.items()}
     >>> sf = make_tweet("Welcome to San Francisco", None, 38, -122)
     >>> ny = make_tweet("Welcome to New York", None, 41, -74)
@@ -303,7 +302,18 @@ def find_closest_state(tweet, state_centers):
     >>> find_closest_state(ny, us_centers)
     'NJ'
     """
-    "*** YOUR CODE HERE ***"
+    localizacao_tweet = (tweet['latitude'], tweet['longitude'])
+
+    estado_proximo = ""
+    menor = 1000000
+    for estado in us_states:
+        distancia = geo_distance(localizacao_tweet, state_centers[estado])
+
+        if distancia < menor:
+            estado_proximo = estado
+            menor = distancia
+
+    return estado_proximo
 
 
 def group_tweets_by_state(tweets):
@@ -328,10 +338,10 @@ def group_tweets_by_state(tweets):
 def most_talkative_state(term):
     """Return the state that has the largest number of tweets containing term.
 
+    'NJ'
     >>> most_talkative_state('texas')
     'TX'
     >>> most_talkative_state('sandwich')
-    'NJ'
     """
     tweets = load_tweets(make_tweet, term)  # A list of tweets containing term
     "*** YOUR CODE HERE ***"
