@@ -196,7 +196,55 @@ def find_centroid(polygon):
     (1, 2, 0)
     """
 
-    "*** YOUR CODE HERE ***"
+    vertices = len(polygon)
+    somatorio_x = 0
+    somatorio_y = 0
+
+    x = 0
+    y = 1
+    area = polygon_area(polygon)
+
+    # area 0
+    if area == 0:
+        return (polygon[0][x], polygon[0][y], int(area))
+
+    # Centroid x
+    for i in range(0, vertices - 1):
+        somatorio_x += (polygon[i][x] + polygon[i+1][x]) * \
+          (polygon[i][x] * polygon[i+1][y] - polygon[i+1][x] * polygon[i][y])
+
+    centroid_x = somatorio_x / (6 * area)
+
+    # Centroid_y
+    for j in range(0, vertices - 1):
+        somatorio_y += (polygon[j][y] + polygon[j+1][y]) * \
+          (polygon[j][x] * polygon[j+1][y] - polygon[j+1][x] * polygon[j][y])
+
+    centroid_y = somatorio_y / (6 * area)
+
+    return (centroid_x, centroid_y, area)
+
+
+def polygon_area(polygon):
+    """ Retorna area de um poligono fechado
+
+    >>> ca = us_states['CA']
+    >>> polygon_area(ca)
+    6.0
+    """
+
+    numero_vertices = len(polygon)
+
+    x = 0
+    y = 1
+    somatorio = 0
+
+    for i in range(0, numero_vertices - 1):
+        somatorio += (polygon[i][x] * polygon[i+1][y]) - (polygon[i+1][x] * polygon[i][y])
+
+    area = abs(somatorio / 2)
+    print(area)
+    return area
 
 
 def find_center(polygons):
@@ -222,8 +270,20 @@ def find_center(polygons):
     """
     "*** YOUR CODE HERE ***"
 
+    centroid = find_centroid(polygons[0])
+
+    return (centroid[0], centroid[1])
+
+
+def teste():
+    """
+    >>> ca = find_center(us_states['HI'])
+    >>> print(us_states['PA'])
+    result
+    """
 
 # Phase 3: The Mood of the Nation
+
 
 def find_closest_state(tweet, state_centers):
     """Return the name of the state closest to the given tweet's location.
