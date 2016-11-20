@@ -361,17 +361,14 @@ def average_sentiments(tweets_by_state):
     names to average sentiment values (numbers).
 
     If a state has no tweets with sentiment values, leave it out of the
-    dictionary entirely. -> Do NOT include states with no tweets, or with tweets
-    that have no sentiment, as 0.  0 represents neutral sentiment, not unknown
-    sentiment.
-    #ver questao 0
+    dictionary entirely. -> Do NOT include states with no tweets, or with
+    tweets that have no sentiment, as 0.  0 represents neutral sentiment, not
+    unknown sentiment.
 
-    {"CA: [tweet1, tweet2], "NY": [tweet3, tweet4]}
-    {"CA: 2,5, "NY":0.77}    tweets_by_state -- A dictionary from state names to lists of tweets
+    tweets_by_state -- A dictionary from state names to lists of tweets
     """
     averaged_state_sentiments = {}
 
-    # para cada estado
     for estado in tweets_by_state.keys():
         soma_estado = 0
         numero_tweets_com_sentimentos = 0
@@ -383,18 +380,11 @@ def average_sentiments(tweets_by_state):
                 numero_tweets_com_sentimentos += 1
                 soma_estado += media_tweet
         if numero_tweets_com_sentimentos != 0:
-            averaged_state_sentiments[estado] = soma_estado / numero_tweets_com_sentimentos
+            averaged_state_sentiments[estado] = soma_estado / \
+                                                numero_tweets_com_sentimentos
 
     return averaged_state_sentiments
 
-    # para cada tweet
-    # passar cada tweet no analyze_tweet_sentiment
-    # medias estado = soma do analyze / len group tweet
-    # average_sentiments[estado] = media estado
-    # retorna average_sentiments
-
-    "*** YOUR CODE HERE ***"
-    return averaged_state_sentiments
 
 # Phase 4: Into the Fourth Dimension
 
