@@ -243,7 +243,7 @@ def polygon_area(polygon):
         somatorio += (polygon[i][x] * polygon[i+1][y]) - (polygon[i+1][x] * polygon[i][y])
 
     area = abs(somatorio / 2)
-    print(area)
+
     return area
 
 
@@ -268,19 +268,9 @@ def find_center(polygons):
     >>> round(longitude(hi), 5)
     -156.21763
     """
-    "*** YOUR CODE HERE ***"
-
     centroid = find_centroid(polygons[0])
 
     return (centroid[0], centroid[1])
-
-
-def teste():
-    """
-    >>> us_centers = {n: find_center(s) for n, s in us_states.items()}
-    >>> print(us_centers)
-    result
-    """
 
 # Phase 3: The Mood of the Nation
 
@@ -302,18 +292,19 @@ def find_closest_state(tweet, state_centers):
     >>> find_closest_state(ny, us_centers)
     'NJ'
     """
+
     localizacao_tweet = (tweet['latitude'], tweet['longitude'])
-
-    estado_proximo = ""
-    menor = 1000000
-    for estado in us_states:
-        distancia = geo_distance(localizacao_tweet, state_centers[estado])
-
-        if distancia < menor:
-            estado_proximo = estado
-            menor = distancia
-
-    return estado_proximo
+    distancia_minima = None
+    for estado in state_centers:
+        distancia_estado = geo_distance(state_centers[estado], localizacao_tweet)
+        if distancia_minima is None:
+            distancia_minima = distancia_estado
+            iniciais = estado
+        else:
+            if distancia_minima > distancia_estado:
+                distancia_minima = distancia_estado
+                iniciais = estado
+    return iniciais
 
 
 def group_tweets_by_state(tweets):
@@ -331,20 +322,37 @@ def group_tweets_by_state(tweets):
     '"Welcome to San Francisco" @ (38, -122)'
     """
     tweets_by_state = {}
-    "*** YOUR CODE HERE ***"
+    us_centers = {}
+
+    for estado, poligono in us_states.items():
+        us_centers[estado] = find_center(poligono)
+
+    for tweet in tweets:
+        estado_mais_proximo = find_closest_state(tweet, us_centers)
+        if estado_mais_proximo in tweets_by_state:
+            tweets_by_state[estado_mais_proximo] += [tweet]
+        else:
+            tweets_by_state[estado_mais_proximo] = [tweet]
+
     return tweets_by_state
 
 
 def most_talkative_state(term):
     """Return the state that has the largest number of tweets containing term.
 
-    'NJ'
     >>> most_talkative_state('texas')
     'TX'
     >>> most_talkative_state('sandwich')
+    'NJ'
     """
-    tweets = load_tweets(make_tweet, term)  # A list of tweets containing term
-    "*** YOUR CODE HERE ***"
+    tweets = load_tweets(make_tweet, term)
+    por_estado = group_tweets_by_state(tweets)
+    maior = 0
+    for valor in por_estado:
+        if len(por_estado[valor]) >= maior:
+            maior = len(por_estado[valor])
+            estadomaior = valor
+    return estadomaior
 
 
 def average_sentiments(tweets_by_state):
@@ -353,22 +361,47 @@ def average_sentiments(tweets_by_state):
     names to average sentiment values (numbers).
 
     If a state has no tweets with sentiment values, leave it out of the
-    dictionary entirely.  Do NOT include states with no tweets, or with tweets
+    dictionary entirely. -> Do NOT include states with no tweets, or with tweets
     that have no sentiment, as 0.  0 represents neutral sentiment, not unknown
     sentiment.
+    #ver questao 0
 
-    tweets_by_state -- A dictionary from state names to lists of tweets
+    {"CA: [tweet1, tweet2], "NY": [tweet3, tweet4]}
+    {"CA: 2,5, "NY":0.77}    tweets_by_state -- A dictionary from state names to lists of tweets
     """
     averaged_state_sentiments = {}
+
+    # para cada estado
+    for estado in tweets_by_state.keys():
+        soma_estado = 0
+        numero_tweets_com_sentimentos = 0
+
+        list_tweets_estado = tweets_by_state[estado]
+        for tweet in list_tweets_estado:
+            media_tweet = analyze_tweet_sentiment(tweet)
+            if media_tweet is not None:
+                numero_tweets_com_sentimentos += 1
+                soma_estado += media_tweet
+        if numero_tweets_com_sentimentos != 0:
+            averaged_state_sentiments[estado] = soma_estado / numero_tweets_com_sentimentos
+
+    return averaged_state_sentiments
+
+    # para cada tweet
+    # passar cada tweet no analyze_tweet_sentiment
+    # medias estado = soma do analyze / len group tweet
+    # average_sentiments[estado] = media estado
+    # retorna average_sentiments
+
     "*** YOUR CODE HERE ***"
     return averaged_state_sentiments
 
-
 # Phase 4: Into the Fourth Dimension
 
-def group_tweets_by_hour(tweets):
-    """Return a dictionary that groups tweets by the hour they were posted.
 
+def group_tweets_by_hour(tweets):
+
+    """Return a dictionary that groups tweets by the hour they were posted.
     The keys of the returned dictionary are the integers 0 through 23.
 
     The values are lists of tweets, where tweets_by_hour[i] is the list of all
@@ -380,12 +413,18 @@ def group_tweets_by_hour(tweets):
 
     tweets -- A list of tweets to be grouped
     """
-    tweets_by_hour = {}
-    "*** YOUR CODE HERE ***"
+    tweets_by_hour = {hora: [] for hora in range(24)}
+
+    for tweet in tweets:
+        tempo = tweet_time(tweet)
+        horas = tempo.hour
+        tweets_by_hour[horas] += [tweet]
+
     return tweets_by_hour
 
 
 # Interaction.  You don't need to read this section of the program.
+
 
 def print_sentiment(text='Are you virtuous or verminous?'):
     """Print the words in text, annotated by their sentiment scores."""
