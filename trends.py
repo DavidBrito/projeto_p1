@@ -1,4 +1,4 @@
-"""Visualizing Twitter Sentiment Across America"""
+"""Grupo: Ewerton de Jesus e Matheus gurjao"""
 
 from data import word_sentiments, load_tweets
 from datetime import datetime
@@ -9,7 +9,7 @@ from string import ascii_letters
 from ucb import main, trace, interact, log_current_line
 
 
-# Phase 1: The Feelings in Tweets  (FEITO 1/2)
+# Phase 1: The Feelings in Tweets
 
 def make_tweet(text, time, lat, lon):
     """Return a tweet, represented as a python dictionary.
@@ -64,7 +64,8 @@ def extract_words(text):
     >>> extract_words("paperclips! they're so awesome, cool, & useful!")
     ['paperclips', 'they', 're', 'so', 'awesome', 'cool', 'useful']
     """
-
+    # para cada caractere na palavra verifica se eh uma letra ascii
+    # retorna a frase dividida por palavras
     sempontuacao = ''
     for elemento in text:
         if elemento in ascii_letters:
@@ -87,7 +88,7 @@ def make_sentiment(value):
     0.2
     """
     assert value is None or (value >= -1 and value <= 1), 'Illegal value'
-
+    # se haver setimento retorna o valor desse sentimento
     if has_sentiment(value):
         return sentiment_value(value)
     else:
@@ -96,19 +97,17 @@ def make_sentiment(value):
 
 def has_sentiment(s):
     """Retorna se o sentimento tem valor."""
+    # se o valor do sentimento for None retorna Falso
     if s is None:
-
         return False
-
-    elif s >= -1 and s <= 1:
-
+    # se o valor estiver entre -1 e 1 retorna Verdadeiro
+    if s >= -1 and s <= 1:
         return True
 
 
 def sentiment_value(s):
     """Return the value of a sentiment s."""
     assert has_sentiment(s), 'No sentiment value'
-
     return s
 
 
@@ -151,6 +150,11 @@ def analyze_tweet_sentiment(tweet):
     valor_total = 0.0
     numero_palavras = 0
     tem_sentimento = False
+
+    # para cada palavra no tweet verifica se ela tem sentimento
+    # conta quantas palavras tem sentimento e divide pelo valor total deles
+    # se houver sentimento no tweet
+    # caso nao tenha sentimento, retorna None.
 
     for palavra in palavras:
         valor_sentimento = get_word_sentiment(palavra)
@@ -204,45 +208,42 @@ def find_centroid(polygon):
     y = 1
     area = polygon_area(polygon)
 
-    # area 0
+    # caso a area do poligono seja zero, retorna sua primeira posicao
+    # como centroid
     if area == 0:
         return (polygon[0][x], polygon[0][y], int(area))
 
-    # Centroid x
+    # Aplicacao da formula Centroid x
     for i in range(0, vertices - 1):
         somatorio_x += (polygon[i][x] + polygon[i+1][x]) * \
           (polygon[i][x] * polygon[i+1][y] - polygon[i+1][x] * polygon[i][y])
 
     centroid_x = somatorio_x / (6 * area)
 
-    # Centroid_y
+    # Aplicacao da formula Centroid y
     for j in range(0, vertices - 1):
         somatorio_y += (polygon[j][y] + polygon[j+1][y]) * \
           (polygon[j][x] * polygon[j+1][y] - polygon[j+1][x] * polygon[j][y])
 
     centroid_y = somatorio_y / (6 * area)
 
-    return (centroid_x, centroid_y, area)
+    return (centroid_x, centroid_y, abs(area))
 
 
 def polygon_area(polygon):
-    """ Retorna area de um poligono fechado
-
-    >>> ca = us_states['CA']
-    >>> polygon_area(ca)
-    6.0
-    """
+    """ Retorna area de um poligono fechado"""
 
     numero_vertices = len(polygon)
 
     x = 0
     y = 1
     somatorio = 0
-
+    # Aplicacao da formula area do poligono fechado
     for i in range(0, numero_vertices - 1):
-        somatorio += (polygon[i][x] * polygon[i+1][y]) - (polygon[i+1][x] * polygon[i][y])
+        somatorio += (polygon[i][x] * polygon[i+1][y]) - \
+                                     (polygon[i+1][x] * polygon[i][y])
 
-    area = abs(somatorio / 2)
+    area = somatorio / 2
 
     return area
 
@@ -268,6 +269,9 @@ def find_center(polygons):
     >>> round(longitude(hi), 5)
     -156.21763
     """
+    # dado o retorno do us_states[estado] pega o unico elemento e retorna seu
+    # centroid
+
     centroid = find_centroid(polygons[0])
 
     return (centroid[0], centroid[1])
@@ -295,6 +299,9 @@ def find_closest_state(tweet, state_centers):
 
     localizacao_tweet = (tweet['latitude'], tweet['longitude'])
     distancia_minima = None
+    # em cada estado verifica qual a distancia relativa a localizacao do tweet
+    # se ela for minima guarda a inicial do estado
+    # ao fim retorna a inicial do estado mais proximo
     for estado in state_centers:
         distancia_estado = geo_distance(state_centers[estado], localizacao_tweet)
         if distancia_minima is None:
@@ -324,9 +331,13 @@ def group_tweets_by_state(tweets):
     tweets_by_state = {}
     us_centers = {}
 
+    # gera dicionario us center com o estado como chave e seu centro como valor
     for estado, poligono in us_states.items():
         us_centers[estado] = find_center(poligono)
 
+    # para cada tweet verifica qual estado mais proximo e os agrupa por estado
+    # se exite a chave concatena a lista [tweet]
+    # se nao existe, cria a chave com a lista [tweet]
     for tweet in tweets:
         estado_mais_proximo = find_closest_state(tweet, us_centers)
         if estado_mais_proximo in tweets_by_state:
@@ -346,13 +357,18 @@ def most_talkative_state(term):
     'NJ'
     """
     tweets = load_tweets(make_tweet, term)
+    # agrupa os tweets por estado
     por_estado = group_tweets_by_state(tweets)
     maior = 0
+    # verifica o tamanho de cada lista do dicionario pro estado
+    # e verifica se o tamanho dela eh maior que a variavel maior
+    # caso for, declara a variavel maior como o tamanho da lista na chave valor
+    # retorna o estado com mais tweets
     for valor in por_estado:
         if len(por_estado[valor]) >= maior:
             maior = len(por_estado[valor])
-            estadomaior = valor
-    return estadomaior
+            maior_estado = valor
+    return maior_estado
 
 
 def average_sentiments(tweets_by_state):
@@ -368,6 +384,10 @@ def average_sentiments(tweets_by_state):
     tweets_by_state -- A dictionary from state names to lists of tweets
     """
     averaged_state_sentiments = {}
+    # para cada estado como chave no dicionario tweets_by_state
+    # verifica qual a soma das medias dos valores dos sentimentos de cada tweet
+    # e faz a media com o numero de palvras com sentimentos
+    # se o numero_tweets_com_sentimentos for diff de zero coloca no dicionario
 
     for estado in tweets_by_state.keys():
         soma_estado = 0
@@ -383,6 +403,7 @@ def average_sentiments(tweets_by_state):
             averaged_state_sentiments[estado] = soma_estado / \
                                                 numero_tweets_com_sentimentos
 
+    # retorna o valor medio dos sentimentos por estado
     return averaged_state_sentiments
 
 
@@ -403,8 +424,10 @@ def group_tweets_by_hour(tweets):
 
     tweets -- A list of tweets to be grouped
     """
+    # cria um dicionario com chaves de 0 a 23 e listas como valor
     tweets_by_hour = {hora: [] for hora in range(24)}
 
+    # para cada tweet ve a hora e concatena na lista da chave hora
     for tweet in tweets:
         tempo = tweet_time(tweet)
         horas = tempo.hour
